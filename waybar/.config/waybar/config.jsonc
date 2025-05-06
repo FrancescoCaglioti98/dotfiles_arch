@@ -1,40 +1,181 @@
 {
-  "position": "top",
-  "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["hyprland/window"],
-  "modules-right": ["network", "pulseaudio", "battery", "clock"],
-  "clock": {
-    "format": "<span foreground='#f5c2e7'>   </span>{:%a %d %H:%M}",
-    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-  },
-  "battery": {
-    "states": {
-      "warning": 30,
-      "critical": 15
+    "layer": "top", // Waybar at top layer
+    "position": "top", // Waybar position (top|bottom|left|right)
+    // "height": 36, // Waybar height (to be removed for auto height)
+    // Archived modules
+    // "custom/gpu", "bluetooth",  "custom/weather", "temperature", "hyprland/window"
+    // Choose the order of the modules
+    "modules-left": [ "clock", "hyprland/language"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right": [ "cpu", "temperature", "pulseaudio", "network", "tray"],
+    // Modules configuration
+    "hyprland/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{icon}",
+        "format-icons": {
+            "1": "<span color=\"#D8DEE9\"></span>",
+            "2": "<span color=\"#88C0D0\"></span>",
+            "3": "<span color=\"#A3BE8C\"></span>",
+            "4": "<span color=\"#D8DEE9\"></span>",
+        }
     },
-    "format": "<span size='13000' foreground='#a6e3a1'>{icon} </span> {capacity}%",
-    "format-warning": "<span size='13000' foreground='#B1E3AD'>{icon} </span> {capacity}%",
-    "format-critical": "<span size='13000' foreground='#E38C8F'>{icon} </span> {capacity}%",
-    "format-charging": "<span size='13000' foreground='#B1E3AD'> </span>{capacity}%",
-    "format-plugged": "<span size='13000' foreground='#B1E3AD'> </span>{capacity}%",
-    "format-alt": "<span size='13000' foreground='#B1E3AD'>{icon} </span> {time}",
-    "format-full": "<span size='13000' foreground='#B1E3AD'> </span>{capacity}%",
-    "format-icons": ["", "", "", "", ""],
-    "tooltip-format": "{time}"
-  },
-  "network": {
-    "format-wifi": "<span size='13000' foreground='#f5e0dc'>  </span>{essid}",
-    "format-ethernet": "<span size='13000' foreground='#f5e0dc'>󰤭  </span> Disconnected",
-    "format-linked": "{ifname} (No IP) ",
-    "format-disconnected": "<span size='13000' foreground='#f5e0dc'>  </span>Disconnected",
-    "tooltip-format-wifi": "Signal Strenght: {signalStrength}%"
-  },
-  "pulseaudio": {
+    "hyprland/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 50,
+        "tooltip": false
+    },
+    "bluetooth": {
+        "interval": 30,
+        "format": "{icon}",
+        // "format-alt": "{status}",
+        "format-icons": {
+            "enabled": "",
+            "disabled": ""
+        },
+        "on-click": "blueberry"
+    },
+    "hyprland/language": {
+        "format": "<big></big> {}",
+        "max-length": 5,
+        "min-length": 5,
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        },
+        "tooltip": "true"
+    },
+    "tray": {
+        //"icon-size": 11,
+        "spacing": 5
+    },
+    "clock": {
+        "format": "  {:%H:%M   %e %b}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "today-format": "<b>{}</b>",
+        "on-click": "merkuro-calendar"
+    },
+    "cpu": {
+        "interval": "1",
+        "format": "  {max_frequency}GHz <span color=\"darkgray\">| {usage}%</span>",
+        "max-length": 13,
+        "min-length": 13,
+        "on-click": "kitty -e htop --sort-key PERCENT_CPU",
+        "tooltip": false
+    },
+    "temperature": {
+        //"thermal-zone": 1,
+        "interval": "4",
+        "hwmon-path": "/sys/class/hwmon/hwmon3/temp1_input",
+        "critical-threshold": 74,
+        "format-critical": "  {temperatureC}°C",
+        "format": "{icon}  {temperatureC}°C",
+        "format-icons": ["", "", ""],
+        "max-length": 7,
+        "min-length": 7
+    },
+    "network": {
+        // "interface": "wlan0", // (Optional) To force the use of this interface,
+        "format-wifi": "  {essid}",
+        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "family": "ipv4",
+        "tooltip-format-wifi": "  {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n {bandwidthUpBits}  {bandwidthDownBits}",
+        "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n {bandwidthUpBits}  {bandwidthDownBits}"
+    },
+    "pulseaudio": {
+        "scroll-step": 3, // %, can be a float
+        "format": "{icon} {volume}% {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        //"format-source": "{volume}% ",
+        //"format-source-muted": "",
+        "format-source": "",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+//        "on-click": "pavucontrol",
+//       "on-click-right": "pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+    },
+    "pulseaudio_old": {
       "format": "{icon}  {volume}%",
       "format-muted": "",
       "format-icons": {
           "default": ["", "", " "]
       },
       "on-click": "pavucontrol"
-  }
+    },
+    "custom/pacman": {
+        "format": "<big>􏆲</big>  {}",
+        "interval": 3600,                     // every hour
+        "exec": "checkupdates | wc -l",       // # of updates
+        "exec-if": "exit 0",                  // always run; consider advanced run conditions
+        "on-click": "kitty -e 'yay'; pkill -SIGRTMIN+8 waybar", // update system
+        "signal": 8,
+        "max-length": 5,
+        "min-length": 3
+    },
+    "custom/weather": {
+        "exec": "curl 'https://wttr.in/?format=1'",
+        "interval": 3600
+    },
+    "custom/gpu": {
+      "exec": "$HOME/.config/waybar/custom_modules/custom-gpu.sh",
+      "return-type": "json",
+      "format": "  {}",
+      "interval": 2,
+      "tooltip": "{tooltip}",
+      "max-length": 19,
+      "min-length": 19,
+      "on-click": "powerupp"
+
+    },
+    "custom/cpugovernor": {
+      "format": "{icon}",
+      "interval": "30",
+      "return-type": "json",
+      "exec": "$HOME/.config/waybar/custom_modules/cpugovernor.sh",
+      "min-length": 2,
+      "max-length": 2,
+        "format-icons": {
+            "perf": "",
+            "sched": ""
+        },
+    },
+    "custom/media": {
+        "format": "{icon} {}",
+        "return-type": "json",
+        "max-length": 40,
+        "format-icons": {
+            "spotify": "",
+            "default": "🎜"
+        },
+        "escape": true,
+        "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
+        // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
+    },
+    "custom/scratchpad-indicator": {
+        "interval": 3,
+        "return-type": "json",
+        "exec": "cmsg -t get_tree | jq --unbuffered --compact-output '( select(.name == \"root\") | .nodes[] | select(.name == \"__i3\") | .nodes[] | select(.name == \"__i3_scratch\") | .focus) as $scratch_ids | [..  | (.nodes? + .floating_nodes?) // empty | .[] | select(.id |IN($scratch_ids[]))] as $scratch_nodes | { text: \"\\($scratch_nodes | length)\", tooltip: $scratch_nodes | map(\"\\(.app_id // .window_properties.class) (\\(.id)): \\(.name)\") | join(\"\\n\") }'",
+        "format": "{} 􏠜",
+        "on-click": "exec swaymsg 'scratchpad show'",
+        "on-click-right": "exec swaymsg 'move scratchpad'"
+    }
 }
